@@ -1,0 +1,25 @@
+{
+    "name": "tilejson",
+    "version": "1.0.0",
+    "main": "./lib/tilejson.js",
+    "description": "Tile source backend for online tile sources",
+    "url": "http://github.com/mapbox/node-tilejson",
+    "licenses": [{
+        "type": "BSD"
+    }],
+    "repositories": [{
+        "type": "git",
+        "url": "http://github.com/mapbox/node-tilejson.git"
+    }],
+    "author": {
+        "name": "MapBox",
+        "url": "http://mapbox.com/",
+        "email": "info@mapbox.com"
+    },
+    "contributors": [
+        "Konstantin Käfer <kkaefer@gmail.com>"
+    ],
+    "dependencies": {
+        "get": "0.4.x"
+    }
+}
