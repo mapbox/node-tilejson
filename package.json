@@ -21,6 +21,7 @@
     ],
     "dependencies": {
         "get": "~0.4.1",
-        "mbtiles": "https://github.com/mapbox/node-mbtiles/tarball/tilelive-refactoring"
+        "step": "0.0.x",
+        "sqlite3": "2.0.x"
     }
 }
