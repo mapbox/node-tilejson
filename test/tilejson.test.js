@@ -7,6 +7,8 @@ function md5(str) {
   return crypto.createHash('md5').update(str).digest('hex');
 }
 
+try { fs.unlink(__dirname + '/fixtures/mapquest.tilejson.cache'); } catch (err) {}
+
 exports['test loading tile'] = function(beforeExit) {
     var completed = {};
 
