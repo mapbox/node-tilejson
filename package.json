@@ -20,6 +20,7 @@
         "Konstantin Käfer <kkaefer@gmail.com>"
     ],
     "dependencies": {
-        "get": "~0.4.1"
+        "get": "~0.4.1",
+        "mbtiles": "0.1.x"
     }
 }
