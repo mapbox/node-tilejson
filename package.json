@@ -21,6 +21,6 @@
     ],
     "dependencies": {
         "get": "~0.4.1",
-        "mbtiles": "0.1.x"
+        "mbtiles": "https://github.com/mapbox/node-mbtiles/tarball/tilelive-refactoring"
     }
 }
