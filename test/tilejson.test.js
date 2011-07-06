@@ -29,6 +29,7 @@ exports['test loading tile'] = function(beforeExit) {
             fs.writeFileSync('foo.png', data);
             // Note: This may break when MapQuest changes their tiles.
             assert.equal('a8022b7eb0be56fb1931a12f92690540', md5(data));
+            source._close();
         });
     });
 
@@ -53,6 +54,7 @@ exports['test loading interactivity'] = function(beforeExit) {
             completed.tile_0_0_0 = true;
             assert.ok(err);
             assert.equal(err.message, 'Grid does not exist');
+            source._close();
         });
     });
 
