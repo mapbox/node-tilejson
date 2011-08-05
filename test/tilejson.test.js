@@ -12,7 +12,7 @@ try { fs.unlink(__dirname + '/fixtures/mapquest.tilejson.cache'); } catch (err) 
 exports['test loading tile'] = function(beforeExit) {
     var completed = {};
 
-    var source = new TileJSON('tilejson://' + __dirname + '/fixtures/mapquest.tilejson', function(err) {
+    new TileJSON('tilejson://' + __dirname + '/fixtures/mapquest.tilejson', function(err, source) {
         completed.load = true;
         if (err) throw err;
 
@@ -28,7 +28,7 @@ exports['test loading tile'] = function(beforeExit) {
             if (err) throw err;
             fs.writeFileSync('foo.png', data);
             // Note: This may break when MapQuest changes their tiles.
-            assert.equal('a8022b7eb0be56fb1931a12f92690540', md5(data));
+            assert.equal('9fd9db987fde0b36aee4548dbb3e0097', md5(data));
             source._close();
         });
     });
@@ -46,7 +46,7 @@ exports['test loading tile'] = function(beforeExit) {
 exports['test loading interactivity'] = function(beforeExit) {
     var completed = {};
 
-    var source = new TileJSON('tilejson://' + __dirname + '/fixtures/mapquest.tilejson', function(err) {
+    new TileJSON('tilejson://' + __dirname + '/fixtures/mapquest.tilejson', function(err, source) {
         completed.load = true;
         if (err) throw err;
 
