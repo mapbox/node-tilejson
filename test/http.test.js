@@ -7,8 +7,6 @@ function md5(str) {
   return crypto.createHash('md5').update(str).digest('hex');
 }
 
-try { fs.unlink(__dirname + '/fixtures/mapquest.tilejson.cache'); } catch (err) {}
-
 exports['test async calling'] = function(beforeExit) {
     var completed = false;
     new TileJSON('http://a.tiles.mapbox.com/mapbox/1.0.0/world-bright/layer.json', function(err, source) {
@@ -16,7 +14,6 @@ exports['test async calling'] = function(beforeExit) {
         source.getTile(0, 0, 0, function(err, data) {
             completed = true;
             if (err) throw err;
-            // Note: This may break when MapQuest changes their tiles.
             assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
         });
     });
