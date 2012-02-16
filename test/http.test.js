@@ -15,6 +15,7 @@ exports['test async calling'] = function(beforeExit) {
             completed = true;
             if (err) throw err;
             assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
+            clearInterval(source._deleteInterval);
         });
     });
 
