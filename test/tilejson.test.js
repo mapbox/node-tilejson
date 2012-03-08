@@ -60,3 +60,25 @@ exports['test loading interactivity'] = function(beforeExit) {
         });
     });
 };
+
+exports['test error'] = function(beforeExit) {
+    var completed = { };
+
+    new TileJSON('tilejson://' + __dirname + '/fixtures/enoent.tilejson', function(err, source) {
+        completed.enoent = err.code;
+        return;
+    });
+
+    new TileJSON('tilejson://' + __dirname + '/fixtures/bad.tilejson', function(err, source) {
+        completed.parseErr = err.type;
+        return;
+    });
+
+    beforeExit(function() {
+        assert.deepEqual(completed, {
+            enoent: 'ENOENT',
+            parseErr: 'unexpected_token'
+        });
+    });
+};
+

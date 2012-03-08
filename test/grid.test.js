@@ -20,19 +20,19 @@ exports['test loading interactivity'] = function(beforeExit) {
         source.getGrid(6, 29, 30, function(err, data, headers) {
             completed.tile_6_29_30_1 = true;
             assert.isNull(err);
-            assert.equal('4b06ccac5efba3c4eaee3b29a1389fa0', md5(JSON.stringify(data)));
-            assert.ok(headers['Content-Type']);
-            assert.ok(headers['Last-Modified']);
-            assert.ok(headers['ETag']);
+            assert.equal('4f8790dc72e204132531f1e12dea20a1', md5(JSON.stringify(data)));
+            assert.ok('Content-Type' in headers);
+            assert.ok('Last-Modified' in headers);
+            assert.ok('ETag' in headers);
 
             // Request the same again to test caching.
             source.getGrid(6, 29, 30, function(err, data, headers) {
                 completed.tile_6_29_30_2 = true;
                 assert.isNull(err);
-                assert.equal('4b06ccac5efba3c4eaee3b29a1389fa0', md5(JSON.stringify(data)));
-                assert.ok(headers['Content-Type']);
-                assert.ok(headers['Last-Modified']);
-                assert.ok(headers['ETag']);
+                assert.equal('4f8790dc72e204132531f1e12dea20a1', md5(JSON.stringify(data)));
+                assert.ok('Content-Type' in headers);
+                assert.ok('Last-Modified' in headers);
+                assert.ok('ETag' in headers);
                 source._close();
             });
         });
