@@ -24,7 +24,7 @@ exports['test loading tile'] = function(beforeExit) {
             completed.tile_2_2_2 = true;
             if (err) throw err;
             assert.equal('84044cc921ee458cd1ece905e2682db0', md5(data));
-            source._close();
+            source.close();
         });
     });
 
@@ -49,7 +49,7 @@ exports['test loading interactivity'] = function(beforeExit) {
             completed.tile_0_0_0 = true;
             assert.ok(err);
             assert.equal(err.message, 'Grid does not exist');
-            source._close();
+            source.close();
         });
     });
 

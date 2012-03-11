@@ -33,7 +33,7 @@ exports['test loading interactivity'] = function(beforeExit) {
                 assert.ok('Content-Type' in headers);
                 assert.ok('Last-Modified' in headers);
                 assert.ok('ETag' in headers);
-                source._close();
+                source.close();
             });
         });
     });
