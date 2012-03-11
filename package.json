@@ -1,6 +1,6 @@
 {
     "name": "tilejson",
-    "version": "0.0.6",
+    "version": "0.1.0",
     "main": "./lib/tilejson.js",
     "description": "Tile source backend for online tile sources",
     "url": "http://github.com/mapbox/node-tilejson",
@@ -20,7 +20,7 @@
         "Konstantin Käfer <kkaefer@gmail.com>"
     ],
     "dependencies": {
-        "get": "~0.4.1",
-        "step": "0.0.x"
+        "get": "~1.1.2",
+        "step": "~0.0.5",
     }
 }
