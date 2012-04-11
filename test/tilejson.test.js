@@ -1,6 +1,7 @@
 var assert = require('assert');
 var crypto = require('crypto');
 var fs = require('fs');
+var http = require('http');
 var TileJSON = require('..');
 
 function md5(str) {
@@ -101,7 +102,7 @@ describe('loading tilejson files via HTTP', function() {
     });
 
     after(function(done) {
-        tilejson.close(done);
+        if (tilejson) tilejson.close(done); else done();
     });
 });
 
@@ -121,5 +122,53 @@ describe('loading bad tilejson files', function() {
             assert.equal(err.type, 'unexpected_token');
             done();
         });
+    });
+});
+
+
+describe('loading tiles from bad server', function() {
+    var tilejson;
+    var server;
+
+    before(function(done) {
+        new TileJSON('tilejson://' + __dirname + '/fixtures/invalid.tilejson?timeout=200', function(err, source) {
+            tilejson = source;
+            done(err);
+        });
+    });
+
+    before(function(done) {
+        server = http.createServer(function (req, res) {
+            if (req.url === '/tiles/1/0/0.png') {
+                // Wait forever.
+            } else  {
+                res.writeHead(500);
+                res.end();
+            }
+        }).listen(38923, done);
+    });
+
+    it('should load a tile from the specified tilejson source', function(done) {
+        tilejson.getTile(0, 0, 0, function(err, data, headers) {
+            assert.ok(err);
+            assert.equal(err.message, 'Server returned HTTP 500');
+            done();
+        });
+    });
+
+    it('should abort when the server takes too long', function(done) {
+        tilejson.getTile(1, 0, 0, function(err, data, headers) {
+            assert.ok(err);
+            assert.equal(err.message, 'Timed out after 200ms');
+            done();
+        });
+    });
+
+    after(function(done) {
+        if (tilejson) tilejson.close(done); else done();
+    });
+
+    after(function() {
+        server.close();
     });
 });
