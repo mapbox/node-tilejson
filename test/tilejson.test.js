@@ -7,78 +7,119 @@ function md5(str) {
   return crypto.createHash('md5').update(str).digest('hex');
 }
 
-exports['test loading tile'] = function(beforeExit) {
-    var completed = {};
+function deleteCache(done) {
+    fs.unlink(__dirname + '/fixtures/grid.tilejson.cache', function(err) {
+        done(!err || err.code === 'ENOENT' ? null : err);
+    });
+}
 
+
+
+before(deleteCache);
+after(deleteCache);
+
+
+var world_bright;
+before(function(done) {
     new TileJSON('tilejson://' + __dirname + '/fixtures/world-bright.tilejson', function(err, source) {
-        completed.load = true;
-        if (err) throw err;
+        world_bright = source;
+        done(err);
+    });
+});
+after(function(done) { world_bright.close(done); });
 
-        source.getTile(0, 0, 0, function(err, data) {
-            completed.tile_0_0_0 = true;
+var grid_source;
+before(function(done) {
+    new TileJSON('tilejson://' + __dirname + '/fixtures/grid.tilejson', function(err, source) {
+        grid_source = source;
+        done(err);
+    });
+});
+after(function(done) { grid_source.close(done); });
+
+
+// -----------------------------------------------------------------------------
+
+
+describe('loading tiles', function() {
+    it('should load tile 0/0/0', function(done) {
+        world_bright.getTile(0, 0, 0, function(err, data) {
             if (err) throw err;
             assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
+            done();
         });
+    });
 
-        source.getTile(2, 2, 2, function(err, data) {
-            completed.tile_2_2_2 = true;
+    it('should load tile 2/2/2', function(done) {
+        world_bright.getTile(2, 2, 2, function(err, data) {
             if (err) throw err;
             assert.equal('84044cc921ee458cd1ece905e2682db0', md5(data));
-            source.close();
+            done();
         });
     });
+});
 
-    beforeExit(function() {
-        assert.deepEqual(completed, {
-            load: true,
-            tile_0_0_0: true,
-            tile_2_2_2: true
-        });
-    });
-};
-
-
-exports['test loading interactivity'] = function(beforeExit) {
-    var completed = {};
-
-    new TileJSON('tilejson://' + __dirname + '/fixtures/world-bright.tilejson', function(err, source) {
-        completed.load = true;
-        if (err) throw err;
-
-        source.getGrid(0, 0, 0, function(err, data) {
-            completed.tile_0_0_0 = true;
+describe('loading grids', function() {
+    it('should fail for non-existent grid', function(done) {
+        world_bright.getGrid(0, 0, 0, function(err, data) {
             assert.ok(err);
             assert.equal(err.message, 'Grid does not exist');
-            source.close();
+            done();
         });
     });
 
-    beforeExit(function() {
-        assert.deepEqual(completed, {
-            load: true,
-            tile_0_0_0: true
+    it('should load grid 6/29/30', function(done) {
+        grid_source.getGrid(6, 29, 30, function(err, data, headers) {
+            if (err) throw err;
+            assert.equal('4f8790dc72e204132531f1e12dea20a1', md5(JSON.stringify(data)));
+            assert.ok('Content-Type' in headers);
+            assert.ok('Last-Modified' in headers);
+            assert.ok('ETag' in headers);
+            done();
         });
     });
-};
+});
 
-exports['test error'] = function(beforeExit) {
-    var completed = { };
 
-    new TileJSON('tilejson://' + __dirname + '/fixtures/enoent.tilejson', function(err, source) {
-        completed.enoent = err.code;
-        return;
-    });
+describe('loading tilejson files via HTTP', function() {
+    var tilejson;
 
-    new TileJSON('tilejson://' + __dirname + '/fixtures/bad.tilejson', function(err, source) {
-        completed.parseErr = err.type;
-        return;
-    });
-
-    beforeExit(function() {
-        assert.deepEqual(completed, {
-            enoent: 'ENOENT',
-            parseErr: 'unexpected_token'
+    it('should load a tilejson file', function(done) {
+        new TileJSON('http://a.tiles.mapbox.com/mapbox/1.0.0/world-bright/layer.json', function(err, source) {
+            tilejson = source;
+            done(err);
         });
     });
-};
 
+    it('should load a tile from the specified tilejson source', function(done) {
+        tilejson.getTile(0, 0, 0, function(err, data, headers) {
+            if (err) throw err;
+            assert.equal('max-age=14400', headers['Cache-Control']);
+            assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
+            done();
+        });
+    });
+
+    after(function(done) {
+        tilejson.close(done);
+    });
+});
+
+
+describe('loading bad tilejson files', function() {
+    it('should return ENOENT for missing file', function(done) {
+         new TileJSON('tilejson://' + __dirname + '/fixtures/enoent.tilejson', function(err, source) {
+            assert.ok(err);
+            assert.equal(err.code, 'ENOENT');
+            done();
+        });
+    });
+
+    it('should return parser error for invalid JSON', function(done) {
+         new TileJSON('tilejson://' + __dirname + '/fixtures/bad.tilejson', function(err, source) {
+            assert.ok(err);
+            assert.equal(err.type, 'unexpected_token');
+            done();
+        });
+    });
+});
