@@ -1,6 +1,6 @@
 {
     "name": "tilejson",
-    "version": "0.1.3",
+    "version": "0.2.0",
     "main": "./lib/tilejson.js",
     "description": "Tile source backend for online tile sources",
     "url": "http://github.com/mapbox/node-tilejson",
