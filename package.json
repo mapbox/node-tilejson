@@ -20,12 +20,12 @@
         "Konstantin Käfer <kkaefer@gmail.com>"
     ],
     "dependencies": {
-        "get": "1.2.0",
+        "get": "1.2.x",
         "step": "~0.0.5",
-        "agentkeepalive": "https://github.com/willwhite/agentkeepalive/tarball/timeout-dev"
+        "agentkeepalive": "0.1.x"
     },
     "devDependencies": {
-        "mocha": "~1.0.0"
+        "mocha": "*"
     },
     "scripts": {
         "test": "mocha -R spec"
