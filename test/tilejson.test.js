@@ -123,6 +123,14 @@ describe('loading bad tilejson files', function() {
             done();
         });
     });
+
+    it('should not attempt to load source from cache', function(done) {
+         new TileJSON('tilejson://' + __dirname + '/fixtures/bad.tilejson', function(err, source) {
+            assert.ok(err);
+            assert.equal(err.type, 'unexpected_token');
+            done();
+        });
+    });
 });
 
 
