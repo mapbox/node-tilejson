@@ -95,7 +95,7 @@ describe('loading tilejson files via HTTP', function() {
     it('should load a tile from the specified tilejson source', function(done) {
         tilejson.getTile(0, 0, 0, function(err, data, headers) {
             if (err) throw err;
-            assert.equal('max-age=14400', headers['Cache-Control']);
+            assert.ok('Cache-Control' in headers);
             assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
             done();
         });
