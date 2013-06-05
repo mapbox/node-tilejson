@@ -7,10 +7,10 @@
     "licenses": [{
         "type": "BSD"
     }],
-    "repositories": [{
+    "repository": {
         "type": "git",
         "url": "http://github.com/mapbox/node-tilejson.git"
-    }],
+    },
     "author": {
         "name": "MapBox",
         "url": "http://mapbox.com/",
