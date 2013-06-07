@@ -20,7 +20,7 @@
         "Konstantin Käfer <kkaefer@gmail.com>"
     ],
     "dependencies": {
-        "get": "1.2.x",
+        "get": "https://github.com/developmentseed/node-get/tarball/node-v0.10.x",
         "step": "~0.0.5",
         "agentkeepalive": "0.1.x"
     },
