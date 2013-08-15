@@ -70,7 +70,7 @@ describe('load file', function() {
     });
 });
 
-describe('loading http', function() {
+describe('load http', function() {
     it('loads a tilejson file', function(done) {
         new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.world-bright.json', function(err, source) {
             assert.ifError(err);
@@ -100,7 +100,7 @@ describe('loading http', function() {
 });
 
 
-describe('loading data', function() {
+describe('load data', function() {
     it('loads directly from data', function(done) {
         new TileJSON({ data: fixtures['world-bright'] }, function(err, source) {
             assert.ifError(err);
@@ -157,7 +157,7 @@ describe('locking IO', function() {
     });
 });
 
-describe('loading tiles', function() {
+describe('tiles', function() {
     it('should load tile 0/0/0', function(done) {
         world_bright.getTile(0, 0, 0, function(err, data) {
             if (err) throw err;
@@ -175,7 +175,7 @@ describe('loading tiles', function() {
     });
 });
 
-describe('loading grids', function() {
+describe('grids', function() {
     it('should fail for non-existent grid', function(done) {
         world_bright.getGrid(0, 0, 0, function(err, data) {
             assert.ok(err);
@@ -196,7 +196,7 @@ describe('loading grids', function() {
     });
 });
 
-describe('loading tiles from bad server', function() {
+describe('tiles from bad server', function() {
     var tilejson;
     var server;
 
