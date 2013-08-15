@@ -8,17 +8,7 @@ function md5(str) {
   return crypto.createHash('md5').update(str).digest('hex');
 }
 
-function deleteCache(done) {
-    fs.unlink(__dirname + '/fixtures/grid.tilejson.cache', function(err) {
-        done(!err || err.code === 'ENOENT' ? null : err);
-    });
-}
-
-
-
-before(deleteCache);
-after(deleteCache);
-
+// @TODO tests for locking IO operations.
 
 var world_bright;
 before(function(done) {
@@ -86,7 +76,7 @@ describe('loading tilejson files via HTTP', function() {
     var tilejson;
 
     it('should load a tilejson file', function(done) {
-        new TileJSON('http://a.tiles.mapbox.com/mapbox/1.0.0/world-bright/layer.json', function(err, source) {
+        new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.world-bright.json', function(err, source) {
             tilejson = source;
             done(err);
         });
