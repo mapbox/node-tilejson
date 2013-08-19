@@ -21,7 +21,6 @@
     ],
     "dependencies": {
         "get": "1.2.x",
-        "step": "~0.0.5",
         "agentkeepalive": "0.1.x"
     },
     "devDependencies": {
