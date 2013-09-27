@@ -242,3 +242,68 @@ describe('tiles from bad server', function() {
         server.close();
     });
 });
+
+describe('get retry', function() {
+    var tilejson;
+    var server;
+    var connectionCount;
+
+    beforeEach(function(done) {
+        connectionCount = 0;
+        new TileJSON('tilejson://' + __dirname + '/fixtures/invalid.tilejson?timeout=200', function(err, source) {
+            tilejson = source;
+            done(err);
+        });
+    });
+
+    it('should retry on socket hangup', function(done) {
+        function setupServer(callback) {
+            server = http.createServer(function (req, res) {});
+            server.on('connection', function(socket) {
+                connectionCount++;
+                socket.destroy();
+            });
+            server.listen(38923);
+            callback();
+        }
+
+        (setupServer(function() {
+            tilejson.getTile(2, 2, 2, function(err, data, headers) {
+                assert.equal(err.code, 'ECONNRESET');
+                assert.equal(connectionCount, 2);
+                server.close();
+                done();
+            });
+        }));
+    });
+
+    describe('http status', function(){
+        before(function(done) {
+            server = http.createServer(function (req, res) {
+                connectionCount++;
+                if (req.url === '/tiles/5/0/0.png') {
+                    res.writeHead(500);
+                } else  {
+                    res.writeHead(400);
+                }
+                res.end();
+            }).listen(38923, done);
+        });
+
+        it('500 should retry', function(done) {
+            tilejson.getTile(5, 0, 0, function(err, data, headers) {
+                assert.equal(err.status, 500);
+                assert.equal(connectionCount, 2);
+                done();
+            });
+        });
+
+        it('400 should not retry', function(done) {
+            tilejson.getTile(4, 0, 0, function(err, data, headers) {
+                assert.equal(err.status, 400);
+                assert.equal(connectionCount, 1);
+                done();
+            });
+        });
+    });
+});
