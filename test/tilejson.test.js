@@ -242,3 +242,38 @@ describe('tiles from bad server', function() {
         server.close();
     });
 });
+
+describe('get', function() {
+    var tilejson;
+    var server;
+    var connectionCount = 0;
+
+    before(function(done) {
+        new TileJSON('tilejson://' + __dirname + '/fixtures/invalid.tilejson?timeout=200', function(err, source) {
+            tilejson = source;
+            done(err);
+        });
+    });
+
+    before(function(done) {
+        server = http.createServer(function (req, res) {});
+        server.on('connection', function(socket) {
+            connectionCount++;
+            socket.destroy();
+        });
+        server.listen(38923, done);
+    });
+
+    it('should retry on socket hangup', function(done) {
+        tilejson.getTile(2, 2, 2, function(err, data, headers) {
+            assert.ok(err);
+            assert.equal(err.code, 'ECONNRESET');
+            assert.equal(connectionCount, 2);
+            done();
+        });
+    });
+
+    after(function() {
+        server.close();
+    });
+});
