@@ -269,7 +269,6 @@ describe('get retry', function() {
 
         (setupServer(function() {
             tilejson.getTile(2, 2, 2, function(err, data, headers) {
-                // console.log("erorororor", err); //CDJ
                 assert.equal(err.code, 'ECONNRESET');
                 assert.equal(connectionCount, 2);
                 server.close();
