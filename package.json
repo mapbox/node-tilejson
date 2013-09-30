@@ -21,7 +21,8 @@
     ],
     "dependencies": {
         "get": "1.3.x",
-        "agentkeepalive": "0.1.x"
+        "agentkeepalive": "0.1.x",
+        "retry": "0.6.0"
     },
     "devDependencies": {
         "mocha": "*"
