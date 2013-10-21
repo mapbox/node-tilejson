@@ -250,7 +250,9 @@ describe('get retry', function() {
 
     beforeEach(function(done) {
         connectionCount = 0;
-        new TileJSON('tilejson://' + __dirname + '/fixtures/invalid.tilejson?timeout=200', function(err, source) {
+        new TileJSON('tilejson://' + __dirname + '/fixtures/invalid.tilejson?timeout=200',
+            { retries: 1 },
+            function(err, source) {
             tilejson = source;
             done(err);
         });
