@@ -195,30 +195,23 @@ describe('locking IO', function() {
             assert.ok(data);
             return this(null, data);
         }
+        var once = function(callback) {
+            stats.once++;
+            fs.readFile(url, 'utf8', function(err, buffer) {
+                if (err) return callback(err);
+                try { var data = JSON.parse(buffer); }
+                catch(err) { return callback(err); }
+                callback(null, data)
+            });
+        };
         Step(function() {
             var lock = TileJSON.Locking(url, callback.bind(this));
-            lock(function(callback) {
-                stats.once++;
-                fs.readFile(url, 'utf8', function(err, buffer) {
-                    if (err) return callback(err);
-                    try { var data = JSON.parse(buffer); }
-                    catch(err) { return callback(err); }
-                    callback(null, data)
-                });
-            });
-        }, function(err, data) {
+            lock(once);
+        }, function(err, info) {
             assert.ifError(err);
-            assert.ok(data);
+            assert.ok(info);
             var lock = TileJSON.Locking(url, callback.bind(this));
-            lock(function(callback) {
-                stats.once++;
-                fs.readFile(url, 'utf8', function(err, buffer) {
-                    if (err) return callback(err);
-                    try { var data = JSON.parse(buffer); }
-                    catch(err) { return callback(err); }
-                    callback(null, data)
-                });
-            });
+            lock(once);
         }, function(err, data) {
             assert.ifError(err);
             assert.ok(data);
