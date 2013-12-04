@@ -3,6 +3,7 @@ var crypto = require('crypto');
 var fs = require('fs');
 var http = require('http');
 var TileJSON = require('..');
+var Step = require('step');
 
 var fixtures = {
     'world-bright': JSON.parse(fs.readFileSync(__dirname + '/fixtures/world-bright.tilejson')),
@@ -154,6 +155,76 @@ describe('locking IO', function() {
                 fs.readFile(__dirname + '/fixtures/world-bright.tilejson', 'utf8', callback);
             });
         }
+    });
+    it('completes multiple callbacks', function(done) {
+        var url = __dirname + '/fixtures/world-bright.tilejson';
+        var stats = { once: 0, many: 0 };
+        var remaining = 4;
+        for (var i = 0; i < 4; i++) {
+            var callback = function(err, data) {
+                stats.many++;
+                assert.ifError(err);
+                if (--remaining === 0) {
+                    assert.equal(4, stats.many);
+                    done();
+                }
+            };
+            var lock = TileJSON.Locking(url, function(err, data) {
+                assert.ifError(err);
+                assert.ok(data);
+                return callback(null, data);
+            });
+            lock(function(callback) {
+                stats.once++;
+                fs.readFile(url, 'utf8', function(err, buffer) {
+                    if (err) return callback(err);
+                    try { var data = JSON.parse(buffer); }
+                    catch(err) { return callback(err); }
+                    callback(null, data)
+                });
+            });
+        }
+    });
+    it('completes multiple callbacks asynchronously', function(done) {
+        this.timeout(10000);
+        var url = __dirname + '/fixtures/world-bright.tilejson';
+        var stats = { once: 0, many: 0 };
+        var callback = function(err, data) {
+            stats.many++;
+            assert.ifError(err);
+            assert.ok(data);
+            return this(null, data);
+        }
+        Step(function() {
+            var lock = TileJSON.Locking(url, callback.bind(this));
+            lock(function(callback) {
+                stats.once++;
+                fs.readFile(url, 'utf8', function(err, buffer) {
+                    if (err) return callback(err);
+                    try { var data = JSON.parse(buffer); }
+                    catch(err) { return callback(err); }
+                    callback(null, data)
+                });
+            });
+        }, function(err, data) {
+            assert.ifError(err);
+            assert.ok(data);
+            var lock = TileJSON.Locking(url, callback.bind(this));
+            lock(function(callback) {
+                stats.once++;
+                fs.readFile(url, 'utf8', function(err, buffer) {
+                    if (err) return callback(err);
+                    try { var data = JSON.parse(buffer); }
+                    catch(err) { return callback(err); }
+                    callback(null, data)
+                });
+            });
+        }, function(err, data) {
+            assert.ifError(err);
+            assert.ok(data);
+            assert.equal(2, stats.many);
+            done();
+        });
     });
 });
 
