@@ -186,7 +186,6 @@ describe('locking IO', function() {
         }
     });
     it('completes multiple callbacks asynchronously', function(done) {
-        this.timeout(10000);
         var url = __dirname + '/fixtures/world-bright.tilejson';
         var stats = { once: 0, many: 0 };
         var callback = function(err, data) {
@@ -201,7 +200,7 @@ describe('locking IO', function() {
                 if (err) return callback(err);
                 try { var data = JSON.parse(buffer); }
                 catch(err) { return callback(err); }
-                callback(null, data)
+                callback(null, data);
             });
         };
         Step(function() {
