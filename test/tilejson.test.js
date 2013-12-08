@@ -45,6 +45,14 @@ describe('load file', function() {
         });
     });
 
+    it('should load a tilejson file with tilejson+file:', function(done) {
+        new TileJSON('tilejson+file://' + __dirname + '/fixtures/world-bright.tilejson', function(err, source) {
+            assert.ifError(err);
+            assert.ok(source.data);
+            done();
+        });
+    });
+
     it('should return ENOENT for missing file', function(done) {
          new TileJSON('tilejson://' + __dirname + '/fixtures/enoent.tilejson', function(err, source) {
             assert.ok(err);
@@ -81,6 +89,14 @@ describe('load http', function() {
                 assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
                 done();
             });
+        });
+    });
+
+    it('loads a tilejson file with tilejson+http:', function(done) {
+        new TileJSON('tilejson+http://a.tiles.mapbox.com/v3/mapbox.world-bright.json', function(err, source) {
+            assert.ifError(err);
+            assert.ok(source.data);
+            done();
         });
     });
 
