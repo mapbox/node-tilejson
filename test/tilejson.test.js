@@ -155,6 +155,62 @@ describe('locking IO', function() {
             });
         }
     });
+    it('completes multiple callbacks', function(done) {
+        var url = __dirname + '/fixtures/world-bright.tilejson';
+        var stats = { once: 0, many: 0 };
+        var remaining = 4;
+        for (var i = 0; i < 4; i++) {
+            var callback = function(err, data) {
+                stats.many++;
+                assert.ifError(err);
+                if (--remaining === 0) {
+                    assert.equal(4, stats.many);
+                    done();
+                }
+            };
+            var lock = TileJSON.Locking(url, function(err, data) {
+                assert.ifError(err);
+                assert.ok(data);
+                return callback(null, data);
+            });
+            lock(function(callback) {
+                stats.once++;
+                fs.readFile(url, 'utf8', function(err, buffer) {
+                    if (err) return callback(err);
+                    try { var data = JSON.parse(buffer); }
+                    catch(err) { return callback(err); }
+                    callback(null, data)
+                });
+            });
+        }
+    });
+    it('completes multiple callbacks asynchronously', function(done) {
+        var url = __dirname + '/fixtures/world-bright.tilejson';
+        var stats = { once: 0, many: 0 };
+        var once = function(callback) {
+            stats.once++;
+            fs.readFile(url, 'utf8', function(err, buffer) {
+                if (err) return callback(err);
+                try { var data = JSON.parse(buffer); }
+                catch(err) { return callback(err); }
+                callback(null, data);
+            });
+        };
+        var lock = function(callback) {
+            return TileJSON.Locking(url, function(err, data) {
+                stats.many++;
+                assert.ifError(err);
+                assert.ok(data);
+                callback();
+            })(once);
+        };
+        lock(function() {
+            lock(function() {
+                assert.equal(2, stats.many);
+                done();
+            });
+        });
+    });
 });
 
 describe('tiles', function() {
