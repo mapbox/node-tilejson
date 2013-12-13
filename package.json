@@ -25,8 +25,7 @@
         "retry": "0.6.0"
     },
     "devDependencies": {
-        "mocha": "*",
-        "step": "0.0.5"
+        "mocha": "*"
     },
     "scripts": {
         "test": "mocha -R spec"
