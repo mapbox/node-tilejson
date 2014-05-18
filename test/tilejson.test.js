@@ -38,7 +38,10 @@ describe('load file', function() {
             assert.ok(source.data);
             source.getTile(0, 0, 0, function(err, data, headers) {
                 assert.ifError(err);
-                assert.ok('Cache-Control' in headers);
+                assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
+                assert.equal('image/png', headers['Content-Type']);
+                assert.equal('string', typeof headers['ETag']);
+                assert.equal('string', typeof headers['Cache-Control']);
                 assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
                 done();
             });
@@ -123,7 +126,10 @@ describe('load data', function() {
             assert.ok(source.data);
             source.getTile(0, 0, 0, function(err, data, headers) {
                 assert.ifError(err);
-                assert.ok('Cache-Control' in headers);
+                assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
+                assert.equal('image/png', headers['Content-Type']);
+                assert.equal('string', typeof headers['ETag']);
+                assert.equal('string', typeof headers['Cache-Control']);
                 assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
                 done();
             });
@@ -231,16 +237,24 @@ describe('locking IO', function() {
 
 describe('tiles', function() {
     it('should load tile 0/0/0', function(done) {
-        world_bright.getTile(0, 0, 0, function(err, data) {
+        world_bright.getTile(0, 0, 0, function(err, data, headers) {
             if (err) throw err;
+            assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
+            assert.equal('image/png', headers['Content-Type']);
+            assert.equal('string', typeof headers['ETag']);
+            assert.equal('string', typeof headers['Cache-Control']);
             assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
             done();
         });
     });
 
     it('should load tile 2/2/2', function(done) {
-        world_bright.getTile(2, 2, 2, function(err, data) {
+        world_bright.getTile(2, 2, 2, function(err, data, headers) {
             if (err) throw err;
+            assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
+            assert.equal('image/png', headers['Content-Type']);
+            assert.equal('string', typeof headers['ETag']);
+            assert.equal('string', typeof headers['Cache-Control']);
             assert.equal('84044cc921ee458cd1ece905e2682db0', md5(data));
             done();
         });
@@ -259,10 +273,11 @@ describe('grids', function() {
     it('should load grid 6/29/30', function(done) {
         grid_source.getGrid(6, 29, 30, function(err, data, headers) {
             if (err) throw err;
+            assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
+            assert.equal('application/json', headers['Content-Type']);
+            assert.equal('string', typeof headers['ETag']);
+            assert.equal('string', typeof headers['Cache-Control']);
             assert.equal('4f8790dc72e204132531f1e12dea20a1', md5(JSON.stringify(data)));
-            assert.ok('Content-Type' in headers);
-            assert.ok('Last-Modified' in headers);
-            assert.ok('ETag' in headers);
             done();
         });
     });
