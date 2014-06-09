@@ -15,6 +15,8 @@ function md5(str) {
 
 var world_bright;
 var world_bright_ssl;
+var grid_source;
+
 before(function(done) {
     new TileJSON('tilejson://' + __dirname + '/fixtures/world-bright.tilejson', function(err, source) {
         world_bright = source;
@@ -27,16 +29,12 @@ before(function(done) {
         done(err);
     });
 });
-after(function(done) { world_bright.close(done); });
-
-var grid_source;
 before(function(done) {
     new TileJSON('tilejson://' + __dirname + '/fixtures/grid.tilejson', function(err, source) {
         grid_source = source;
         done(err);
     });
 });
-after(function(done) { grid_source.close(done); });
 
 describe('load file', function() {
     it('should load a tilejson file', function(done) {
@@ -350,10 +348,6 @@ describe('tiles from bad server', function() {
             assert.equal(err.message, 'Timed out after 200ms');
             done();
         });
-    });
-
-    after(function(done) {
-        if (tilejson) tilejson.close(done); else done();
     });
 
     after(function() {
