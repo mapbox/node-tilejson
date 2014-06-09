@@ -14,22 +14,27 @@ function md5(str) {
 }
 
 var world_bright;
+var world_bright_ssl;
+var grid_source;
+
 before(function(done) {
     new TileJSON('tilejson://' + __dirname + '/fixtures/world-bright.tilejson', function(err, source) {
         world_bright = source;
         done(err);
     });
 });
-after(function(done) { world_bright.close(done); });
-
-var grid_source;
+before(function(done) {
+    new TileJSON('tilejson://' + __dirname + '/fixtures/world-bright-ssl.tilejson', function(err, source) {
+        world_bright_ssl = source;
+        done(err);
+    });
+});
 before(function(done) {
     new TileJSON('tilejson://' + __dirname + '/fixtures/grid.tilejson', function(err, source) {
         grid_source = source;
         done(err);
     });
 });
-after(function(done) { grid_source.close(done); });
 
 describe('load file', function() {
     it('should load a tilejson file', function(done) {
@@ -259,6 +264,30 @@ describe('tiles', function() {
             done();
         });
     });
+
+    it('https should load tile 0/0/0', function(done) {
+        world_bright_ssl.getTile(0, 0, 0, function(err, data, headers) {
+            if (err) throw err;
+            assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
+            assert.equal('image/png', headers['Content-Type']);
+            assert.equal('string', typeof headers['ETag']);
+            assert.equal('string', typeof headers['Cache-Control']);
+            assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
+            done();
+        });
+    });
+
+    it('https should load tile 2/2/2', function(done) {
+        world_bright_ssl.getTile(2, 2, 2, function(err, data, headers) {
+            if (err) throw err;
+            assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
+            assert.equal('image/png', headers['Content-Type']);
+            assert.equal('string', typeof headers['ETag']);
+            assert.equal('string', typeof headers['Cache-Control']);
+            assert.equal('84044cc921ee458cd1ece905e2682db0', md5(data));
+            done();
+        });
+    });
 });
 
 describe('grids', function() {
@@ -319,10 +348,6 @@ describe('tiles from bad server', function() {
             assert.equal(err.message, 'Timed out after 200ms');
             done();
         });
-    });
-
-    after(function(done) {
-        if (tilejson) tilejson.close(done); else done();
     });
 
     after(function() {
