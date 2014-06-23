@@ -23,7 +23,7 @@
   ],
   "dependencies": {
     "get": "1.3.x",
-    "agentkeepalive": "0.1.x",
+    "agentkeepalive": "0.2.x",
     "tiletype": "0.0.x"
   },
   "devDependencies": {
