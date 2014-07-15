@@ -265,6 +265,22 @@ describe('tiles', function() {
         });
     });
 
+    it('should fail for zoom out of range', function(done) {
+        world_bright.getTile(12, 2, 2, function(err, data, headers) {
+            assert.ok(err);
+            assert.equal(err.message, 'Tile does not exist');
+            done();
+        });
+    });
+
+    it('should fail for coordinates out of bounds', function(done) {
+        world_bright.getTile(2, 0, 2, function(err, data, headers) {
+            assert.ok(err);
+            assert.equal(err.message, 'Tile does not exist');
+            done();
+        });
+    });
+
     it('https should load tile 0/0/0', function(done) {
         world_bright_ssl.getTile(0, 0, 0, function(err, data, headers) {
             if (err) throw err;
@@ -307,6 +323,14 @@ describe('grids', function() {
             assert.equal('string', typeof headers['ETag']);
             assert.equal('string', typeof headers['Cache-Control']);
             assert.equal('4f8790dc72e204132531f1e12dea20a1', md5(JSON.stringify(data)));
+            done();
+        });
+    });
+
+    it('should fail for zoom out of range', function(done) {
+        grid_source.getGrid(12, 2, 2, function(err, data, headers) {
+            assert.ok(err);
+            assert.equal(err.message, 'Grid does not exist');
             done();
         });
     });

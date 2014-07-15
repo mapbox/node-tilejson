@@ -4,5 +4,5 @@
     "tiles": [ "http://a.tiles.mapbox.com/v3/mapbox.world-bright/{z}/{x}/{y}.png" ],
     "minzoom": 0,
     "maxzoom": 11,
-    "bounds": [ -180, -85, 180, 85 ]
+    "bounds": [ -80, -85, 180, 85 ]
 }
