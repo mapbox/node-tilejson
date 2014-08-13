@@ -4,6 +4,8 @@ var fs = require('fs');
 var http = require('http');
 var TileJSON = require('..');
 
+TileJSON.agent = TileJSON.httpsagent = null;
+
 var fixtures = {
     'world-bright': JSON.parse(fs.readFileSync(__dirname + '/fixtures/world-bright.tilejson')),
     'grid': JSON.parse(fs.readFileSync(__dirname + '/fixtures/grid.tilejson'))
@@ -333,8 +335,8 @@ describe('tiles from bad server', function() {
         }).listen(38923, done);
     });
 
-    after(function() {
-        server.close();
+    after(function(done) {
+        server.close(done);
     });
 
     it('should load a tile from the specified tilejson source', function(done) {
@@ -377,8 +379,7 @@ describe('get retry', function() {
             local_source.getTile(2, 2, 2, function(err, data, headers) {
                 assert.equal(err.code, 'ECONNRESET');
                 assert.equal(connectionCount, 2);
-                server.close();
-                done();
+                server.close(done);
             });
         }));
     });
@@ -394,6 +395,10 @@ describe('get retry', function() {
                 }
                 res.end();
             }).listen(38923, done);
+        });
+
+        after(function(done) {
+            server.close(done);
         });
 
         it('500 should retry', function(done) {
