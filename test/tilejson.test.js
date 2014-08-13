@@ -3,6 +3,7 @@ var crypto = require('crypto');
 var fs = require('fs');
 var http = require('http');
 var TileJSON = require('..');
+var zlib = require('zlib');
 
 TileJSON.agent = TileJSON.httpsagent = null;
 
@@ -295,6 +296,31 @@ describe('tiles', function() {
             assert.equal('string', typeof headers['Cache-Control']);
             assert.equal('84044cc921ee458cd1ece905e2682db0', md5(data));
             done();
+        });
+    });
+
+    ['deflate', 'gzip'].forEach(function(encoding) {
+        describe('serving with content-encoding: ' + encoding, function(done) {
+            var server;
+
+            before(function(done) {
+                server = http.createServer(function (req, res) {
+                    res.writeHead(200, { 'content-encoding': encoding });
+                    zlib[encoding]('.', function(err, data) { res.end(data) });
+                }).listen(38923, done);
+            });
+
+            after(function(done) {
+                server.close(done);
+            });
+
+            it('is decoded', function(done) {
+                local_source.getTile(0, 0, 0, function(err, data, headers) {
+                    assert.ifError(err);
+                    assert.equal(data, '.');
+                    done();
+                });
+            });
         });
     });
 });
