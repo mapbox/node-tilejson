@@ -24,7 +24,7 @@
   "dependencies": {
     "get": "1.3.x",
     "agentkeepalive": "0.1.x",
-    "tiletype": "git+https://github.com/mapbox/tiletype.git#content-encoding"
+    "tiletype": "git+https://github.com/mapbox/tiletype.git#content-encoding-evil"
   },
   "devDependencies": {
     "mocha": "*"
