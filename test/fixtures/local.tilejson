@@ -1,5 +1,5 @@
 {
-    "name": "Invalid tiles",
+    "name": "Local server",
     "scheme": "xyz",
     "tiles": [ "http://localhost:38923/tiles/{z}/{x}/{y}.png" ],
     "minzoom": 0,

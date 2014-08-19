@@ -3,6 +3,9 @@ var crypto = require('crypto');
 var fs = require('fs');
 var http = require('http');
 var TileJSON = require('..');
+var zlib = require('zlib');
+
+TileJSON.agent = TileJSON.httpsagent = null;
 
 var fixtures = {
     'world-bright': JSON.parse(fs.readFileSync(__dirname + '/fixtures/world-bright.tilejson')),
@@ -16,6 +19,7 @@ function md5(str) {
 var world_bright;
 var world_bright_ssl;
 var grid_source;
+var local_source;
 
 before(function(done) {
     new TileJSON('tilejson://' + __dirname + '/fixtures/world-bright.tilejson', function(err, source) {
@@ -32,6 +36,12 @@ before(function(done) {
 before(function(done) {
     new TileJSON('tilejson://' + __dirname + '/fixtures/grid.tilejson', function(err, source) {
         grid_source = source;
+        done(err);
+    });
+});
+before(function(done) {
+    new TileJSON('tilejson://' + __dirname + '/fixtures/local.tilejson?timeout=200', function(err, source) {
+        local_source = source;
         done(err);
     });
 });
@@ -288,6 +298,31 @@ describe('tiles', function() {
             done();
         });
     });
+
+    ['deflate', 'gzip'].forEach(function(encoding) {
+        describe('serving with content-encoding: ' + encoding, function(done) {
+            var server;
+
+            before(function(done) {
+                server = http.createServer(function (req, res) {
+                    res.writeHead(200, { 'content-encoding': encoding });
+                    zlib[encoding]('.', function(err, data) { res.end(data) });
+                }).listen(38923, done);
+            });
+
+            after(function(done) {
+                server.close(done);
+            });
+
+            it('is decoded', function(done) {
+                local_source.getTile(0, 0, 0, function(err, data, headers) {
+                    assert.ifError(err);
+                    assert.equal(data, '.');
+                    done();
+                });
+            });
+        });
+    });
 });
 
 describe('grids', function() {
@@ -313,15 +348,7 @@ describe('grids', function() {
 });
 
 describe('tiles from bad server', function() {
-    var tilejson;
     var server;
-
-    before(function(done) {
-        new TileJSON('tilejson://' + __dirname + '/fixtures/invalid.tilejson?timeout=200', function(err, source) {
-            tilejson = source;
-            done(err);
-        });
-    });
 
     before(function(done) {
         server = http.createServer(function (req, res) {
@@ -334,8 +361,12 @@ describe('tiles from bad server', function() {
         }).listen(38923, done);
     });
 
+    after(function(done) {
+        server.close(done);
+    });
+
     it('should load a tile from the specified tilejson source', function(done) {
-        tilejson.getTile(0, 0, 0, function(err, data, headers) {
+        local_source.getTile(0, 0, 0, function(err, data, headers) {
             assert.ok(err);
             assert.equal(err.message, 'Server returned HTTP 500');
             done();
@@ -343,29 +374,20 @@ describe('tiles from bad server', function() {
     });
 
     it('should abort when the server takes too long', function(done) {
-        tilejson.getTile(1, 0, 0, function(err, data, headers) {
+        local_source.getTile(1, 0, 0, function(err, data, headers) {
             assert.ok(err);
             assert.equal(err.message, 'Timed out after 200ms');
             done();
         });
     });
-
-    after(function() {
-        server.close();
-    });
 });
 
 describe('get retry', function() {
-    var tilejson;
     var server;
     var connectionCount;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         connectionCount = 0;
-        new TileJSON('tilejson://' + __dirname + '/fixtures/invalid.tilejson?timeout=200', function(err, source) {
-            tilejson = source;
-            done(err);
-        });
     });
 
     it('should retry on socket hangup', function(done) {
@@ -380,11 +402,10 @@ describe('get retry', function() {
         }
 
         (setupServer(function() {
-            tilejson.getTile(2, 2, 2, function(err, data, headers) {
+            local_source.getTile(2, 2, 2, function(err, data, headers) {
                 assert.equal(err.code, 'ECONNRESET');
                 assert.equal(connectionCount, 2);
-                server.close();
-                done();
+                server.close(done);
             });
         }));
     });
@@ -402,8 +423,12 @@ describe('get retry', function() {
             }).listen(38923, done);
         });
 
+        after(function(done) {
+            server.close(done);
+        });
+
         it('500 should retry', function(done) {
-            tilejson.getTile(5, 0, 0, function(err, data, headers) {
+            local_source.getTile(5, 0, 0, function(err, data, headers) {
                 assert.equal(err.status, 500);
                 assert.equal(connectionCount, 2);
                 done();
@@ -411,7 +436,7 @@ describe('get retry', function() {
         });
 
         it('400 should not retry', function(done) {
-            tilejson.getTile(4, 0, 0, function(err, data, headers) {
+            local_source.getTile(4, 0, 0, function(err, data, headers) {
                 assert.equal(err.status, 400);
                 assert.equal(connectionCount, 1);
                 done();
