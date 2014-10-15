@@ -109,8 +109,9 @@ describe('load http', function() {
     });
 
     it('errors on 404', function(done) {
-        new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.doesnotexist.json', function(err, source) {
-            assert.equal('Tileset does not exist', err.message);
+        var uri = 'http://a.tiles.mapbox.com/v3/mapbox.doesnotexist.json';
+        new TileJSON(uri, function(err, source) {
+            assert.equal('Tileset does not exist: ' + uri, err.message);
             done();
         });
     });
