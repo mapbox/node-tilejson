@@ -1,4 +1,4 @@
-var assert = require('assert');
+var tape = require('tape');
 var crypto = require('crypto');
 var fs = require('fs');
 var http = require('http');
@@ -17,27 +17,30 @@ var world_bright;
 var world_bright_ssl;
 var grid_source;
 
-before(function(done) {
+tape('setup', function(assert) {
     new TileJSON('tilejson://' + __dirname + '/fixtures/world-bright.tilejson', function(err, source) {
         world_bright = source;
-        done(err);
+        assert.ifError(err);
+        assert.end();
     });
 });
-before(function(done) {
+tape('setup', function(assert) {
     new TileJSON('tilejson://' + __dirname + '/fixtures/world-bright-ssl.tilejson', function(err, source) {
         world_bright_ssl = source;
-        done(err);
+        assert.ifError(err);
+        assert.end();
     });
 });
-before(function(done) {
+tape('setup', function(assert) {
     new TileJSON('tilejson://' + __dirname + '/fixtures/grid.tilejson', function(err, source) {
         grid_source = source;
-        done(err);
+        assert.ifError(err);
+        assert.end();
     });
 });
 
-describe('load file', function() {
-    it('should load a tilejson file', function(done) {
+(function() {
+    tape('should load a tilejson file', function(assert) {
         new TileJSON('tilejson://' + __dirname + '/fixtures/world-bright.tilejson', function(err, source) {
             assert.ifError(err);
             assert.ok(source.data);
@@ -48,46 +51,46 @@ describe('load file', function() {
                 assert.equal('string', typeof headers['ETag']);
                 assert.equal('string', typeof headers['Cache-Control']);
                 assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
-                done();
+                assert.end();
             });
         });
     });
 
-    it('should load a tilejson file with tilejson+file:', function(done) {
+    tape('should load a tilejson file with tilejson+file:', function(assert) {
         new TileJSON('tilejson+file://' + __dirname + '/fixtures/world-bright.tilejson', function(err, source) {
             assert.ifError(err);
             assert.ok(source.data);
-            done();
+            assert.end();
         });
     });
 
-    it('should return ENOENT for missing file', function(done) {
+    tape('should return ENOENT for missing file', function(assert) {
          new TileJSON('tilejson://' + __dirname + '/fixtures/enoent.tilejson', function(err, source) {
             assert.ok(err);
             assert.equal(err.code, 'ENOENT');
-            done();
+            assert.end();
         });
     });
 
-    it('should return parser error for invalid JSON', function(done) {
+    tape('should return parser error for invalid JSON', function(assert) {
          new TileJSON('tilejson://' + __dirname + '/fixtures/bad.tilejson', function(err, source) {
             assert.ok(err);
             assert.equal(err.type, 'unexpected_token');
-            done();
+            assert.end();
         });
     });
 
-    it('should not attempt to load source from cache', function(done) {
+    tape('should not attempt to load source from cache', function(assert) {
          new TileJSON('tilejson://' + __dirname + '/fixtures/bad.tilejson', function(err, source) {
             assert.ok(err);
             assert.equal(err.type, 'unexpected_token');
-            done();
+            assert.end();
         });
     });
-});
+})();
 
-describe('load http', function() {
-    it('loads a tilejson file', function(done) {
+(function() {
+    tape('loads a tilejson file', function(assert) {
         new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.world-bright.json', function(err, source) {
             assert.ifError(err);
             assert.ok(source.data);
@@ -95,37 +98,36 @@ describe('load http', function() {
                 assert.ifError(err);
                 assert.ok('Cache-Control' in headers);
                 assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
-                done();
+                assert.end();
             });
         });
     });
 
-    it('loads a tilejson file with tilejson+http:', function(done) {
+    tape('loads a tilejson file with tilejson+http:', function(assert) {
         new TileJSON('tilejson+http://a.tiles.mapbox.com/v3/mapbox.world-bright.json', function(err, source) {
             assert.ifError(err);
             assert.ok(source.data);
-            done();
+            assert.end();
         });
     });
 
-    it('errors on 404', function(done) {
+    tape('errors on 404', function(assert) {
         new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.doesnotexist.json', function(err, source) {
             assert.equal('Tileset does not exist', err.message);
-            done();
+            assert.end();
         });
     });
 
-    it('errors on bad JSON', function(done) {
+    tape('errors on bad JSON', function(assert) {
         new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.world-bright.jsonp', function(err, source) {
             assert.equal('Unexpected token g', err.message);
-            done();
+            assert.end();
         });
     });
-});
+})();
 
-
-describe('load data', function() {
-    it('loads directly from data', function(done) {
+(function() {
+    tape('loads directly from data', function(assert) {
         new TileJSON({ data: fixtures['world-bright'] }, function(err, source) {
             assert.ifError(err);
             assert.ok(source.data);
@@ -136,14 +138,14 @@ describe('load data', function() {
                 assert.equal('string', typeof headers['ETag']);
                 assert.equal('string', typeof headers['Cache-Control']);
                 assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
-                done();
+                assert.end();
             });
         });
     });
-});
+})();
 
-describe('locking IO', function() {
-    it('avoids multiple IO calls', function(done) {
+(function() {
+    tape('avoids multiple IO calls', function(assert) {
         var stats = {
             a: { once: 0, many: 0 },
             b: { once: 0, many: 0 }
@@ -157,7 +159,7 @@ describe('locking IO', function() {
                 if (--remaining === 0) {
                     assert.equal(1, stats.a.once);
                     assert.equal(4, stats.a.many);
-                    done();
+                    assert.end();
                 }
             });
             lock(function(callback) {
@@ -173,7 +175,7 @@ describe('locking IO', function() {
                 if (--remaining === 0) {
                     assert.equal(1, stats.b.once);
                     assert.equal(6, stats.b.many);
-                    done();
+                    assert.end();
                 }
             });
             lock(function(callback) {
@@ -182,7 +184,7 @@ describe('locking IO', function() {
             });
         }
     });
-    it('completes multiple callbacks', function(done) {
+    tape('completes multiple callbacks', function(assert) {
         var url = __dirname + '/fixtures/world-bright.tilejson';
         var stats = { once: 0, many: 0 };
         var remaining = 4;
@@ -192,7 +194,7 @@ describe('locking IO', function() {
                 assert.ifError(err);
                 if (--remaining === 0) {
                     assert.equal(4, stats.many);
-                    done();
+                    assert.end();
                 }
             };
             var lock = TileJSON.Locking(url, function(err, data) {
@@ -211,7 +213,7 @@ describe('locking IO', function() {
             });
         }
     });
-    it('completes multiple callbacks asynchronously', function(done) {
+    tape('completes multiple callbacks asynchronously', function(assert) {
         var url = __dirname + '/fixtures/world-bright.tilejson';
         var stats = { once: 0, many: 0 };
         var once = function(callback) {
@@ -234,14 +236,14 @@ describe('locking IO', function() {
         lock(function() {
             lock(function() {
                 assert.equal(2, stats.many);
-                done();
+                assert.end();
             });
         });
     });
-});
+})();
 
-describe('tiles', function() {
-    it('should load tile 0/0/0', function(done) {
+(function() {
+    tape('should load tile 0/0/0', function(assert) {
         world_bright.getTile(0, 0, 0, function(err, data, headers) {
             if (err) throw err;
             assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
@@ -249,11 +251,11 @@ describe('tiles', function() {
             assert.equal('string', typeof headers['ETag']);
             assert.equal('string', typeof headers['Cache-Control']);
             assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
-            done();
+            assert.end();
         });
     });
 
-    it('should load tile 2/2/2', function(done) {
+    tape('should load tile 2/2/2', function(assert) {
         world_bright.getTile(2, 2, 2, function(err, data, headers) {
             if (err) throw err;
             assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
@@ -261,11 +263,11 @@ describe('tiles', function() {
             assert.equal('string', typeof headers['ETag']);
             assert.equal('string', typeof headers['Cache-Control']);
             assert.equal('84044cc921ee458cd1ece905e2682db0', md5(data));
-            done();
+            assert.end();
         });
     });
 
-    it('https should load tile 0/0/0', function(done) {
+    tape('https should load tile 0/0/0', function(assert) {
         world_bright_ssl.getTile(0, 0, 0, function(err, data, headers) {
             if (err) throw err;
             assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
@@ -273,11 +275,11 @@ describe('tiles', function() {
             assert.equal('string', typeof headers['ETag']);
             assert.equal('string', typeof headers['Cache-Control']);
             assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
-            done();
+            assert.end();
         });
     });
 
-    it('https should load tile 2/2/2', function(done) {
+    tape('https should load tile 2/2/2', function(assert) {
         world_bright_ssl.getTile(2, 2, 2, function(err, data, headers) {
             if (err) throw err;
             assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
@@ -285,21 +287,21 @@ describe('tiles', function() {
             assert.equal('string', typeof headers['ETag']);
             assert.equal('string', typeof headers['Cache-Control']);
             assert.equal('84044cc921ee458cd1ece905e2682db0', md5(data));
-            done();
+            assert.end();
         });
     });
-});
+})();
 
-describe('grids', function() {
-    it('should fail for non-existent grid', function(done) {
+(function() {
+    tape('should fail for non-existent grid', function(assert) {
         world_bright.getGrid(0, 0, 0, function(err, data) {
             assert.ok(err);
             assert.equal(err.message, 'Grid does not exist');
-            done();
+            assert.end();
         });
     });
 
-    it('should load grid 6/29/30', function(done) {
+    tape('should load grid 6/29/30', function(assert) {
         grid_source.getGrid(6, 29, 30, function(err, data, headers) {
             if (err) throw err;
             assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
@@ -307,23 +309,24 @@ describe('grids', function() {
             assert.equal('string', typeof headers['ETag']);
             assert.equal('string', typeof headers['Cache-Control']);
             assert.equal('4f8790dc72e204132531f1e12dea20a1', md5(JSON.stringify(data)));
-            done();
+            assert.end();
         });
     });
-});
+})();
 
-describe('tiles from bad server', function() {
+(function() {
     var tilejson;
     var server;
 
-    before(function(done) {
+    tape('setup', function(assert) {
         new TileJSON('tilejson://' + __dirname + '/fixtures/invalid.tilejson?timeout=200', function(err, source) {
             tilejson = source;
-            done(err);
+            assert.ifError(err);
+            assert.end();
         });
     });
 
-    before(function(done) {
+    tape('setup', function(assert) {
         server = http.createServer(function (req, res) {
             if (req.url === '/tiles/1/0/0.png') {
                 // Wait forever.
@@ -331,44 +334,45 @@ describe('tiles from bad server', function() {
                 res.writeHead(500);
                 res.end();
             }
-        }).listen(38923, done);
+        }).listen(38923, assert.end);
     });
 
-    it('should load a tile from the specified tilejson source', function(done) {
+    tape('should load a tile from the specified tilejson source', function(assert) {
         tilejson.getTile(0, 0, 0, function(err, data, headers) {
             assert.ok(err);
             assert.equal(err.message, 'Server returned HTTP 500');
-            done();
+            assert.end();
         });
     });
 
-    it('should abort when the server takes too long', function(done) {
+    tape('should abort when the server takes too long', function(assert) {
         tilejson.getTile(1, 0, 0, function(err, data, headers) {
             assert.ok(err);
             assert.equal(err.message, 'Timed out after 200ms');
-            done();
+            assert.end();
         });
     });
 
-    after(function() {
-        server.close();
+    tape('cleanup', function(assert) {
+        server.close(assert.end);
     });
-});
+})();
 
-describe('get retry', function() {
+(function() {
     var tilejson;
     var server;
-    var connectionCount;
 
-    beforeEach(function(done) {
-        connectionCount = 0;
+    tape('setup', function(assert) {
         new TileJSON('tilejson://' + __dirname + '/fixtures/invalid.tilejson?timeout=200', function(err, source) {
+            assert.ifError(err);
             tilejson = source;
-            done(err);
+            assert.end();
         });
     });
 
-    it('should retry on socket hangup', function(done) {
+    tape('should retry on socket hangup', function(assert) {
+        var connectionCount = 0;
+
         function setupServer(callback) {
             server = http.createServer(function (req, res) {});
             server.on('connection', function(socket) {
@@ -383,14 +387,15 @@ describe('get retry', function() {
             tilejson.getTile(2, 2, 2, function(err, data, headers) {
                 assert.equal(err.code, 'ECONNRESET');
                 assert.equal(connectionCount, 2);
-                server.close();
-                done();
+                server.close(assert.end);
             });
         }));
     });
 
-    describe('http status', function(){
-        before(function(done) {
+    tape('500 should retry', function(assert) {
+        var connectionCount = 0;
+
+        function setupServer(callback) {
             server = http.createServer(function (req, res) {
                 connectionCount++;
                 if (req.url === '/tiles/5/0/0.png') {
@@ -399,23 +404,38 @@ describe('get retry', function() {
                     res.writeHead(400);
                 }
                 res.end();
-            }).listen(38923, done);
-        });
-
-        it('500 should retry', function(done) {
+            }).listen(38923, callback);
+        }
+        setupServer(function() {
             tilejson.getTile(5, 0, 0, function(err, data, headers) {
                 assert.equal(err.status, 500);
                 assert.equal(connectionCount, 2);
-                done();
-            });
-        });
-
-        it('400 should not retry', function(done) {
-            tilejson.getTile(4, 0, 0, function(err, data, headers) {
-                assert.equal(err.status, 400);
-                assert.equal(connectionCount, 1);
-                done();
+                server.close(assert.end);
             });
         });
     });
-});
+
+    tape('400 should not retry', function(assert) {
+        var connectionCount = 0;
+
+        function setupServer(callback) {
+            server = http.createServer(function (req, res) {
+                connectionCount++;
+                if (req.url === '/tiles/5/0/0.png') {
+                    res.writeHead(500);
+                } else  {
+                    res.writeHead(400);
+                }
+                res.end();
+            }).listen(38923, callback);
+        }
+        setupServer(function() {
+            tilejson.getTile(4, 0, 0, function(err, data, headers) {
+                assert.equal(err.status, 400);
+                assert.equal(connectionCount, 1);
+                server.close(assert.end);
+            });
+        });
+    });
+})();
+
