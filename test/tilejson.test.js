@@ -135,6 +135,28 @@ tape('setup', function(assert) {
             assert.end();
         });
     });
+
+    tape('should load a templated source from an http tiles url', function(assert) {
+        new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.world-bright/{z}/{x}/{y}.png', function(err, source) {
+            assert.ifError(err);
+            assert.ok(source.data);
+            assert.deepEqual(source.data.tiles, [
+                'http://a.tiles.mapbox.com/v3/mapbox.world-bright/{z}/{x}/{y}.png'
+            ]);
+            checkTile(source, assert);
+        });
+    });
+
+    tape('should load a templated source from an tilejson+http tiles url', function(assert) {
+        new TileJSON('tilejson+http://a.tiles.mapbox.com/v3/mapbox.world-bright/{z}/{x}/{y}.png', function(err, source) {
+            assert.ifError(err);
+            assert.ok(source.data);
+            assert.deepEqual(source.data.tiles, [
+                'http://a.tiles.mapbox.com/v3/mapbox.world-bright/{z}/{x}/{y}.png'
+            ]);
+            checkTile(source, assert);
+        });
+    });
 })();
 
 (function() {
