@@ -40,19 +40,67 @@ tape('setup', function(assert) {
 });
 
 (function() {
-    tape('should load a tilejson file', function(assert) {
-        new TileJSON('tilejson://' + __dirname + '/fixtures/world-bright.tilejson', function(err, source) {
+    function checkTile(source, assert) {
+        source.getTile(0, 0, 0, function(err, data, headers) {
+            assert.ifError(err);
+            assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
+            assert.equal('image/png', headers['Content-Type']);
+            assert.equal('string', typeof headers['ETag']);
+            assert.equal('string', typeof headers['Cache-Control']);
+            assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
+            assert.end();
+        });
+    }
+
+    tape('loads directly from data', function(assert) {
+        new TileJSON({ data: fixtures['world-bright'] }, function(err, source) {
+            assert.ifError(err);
+            assert.ok(source.data);
+            checkTile(source, assert);
+        });
+    });
+
+    tape('loads a tilejson file', function(assert) {
+        new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.world-bright.json', function(err, source) {
             assert.ifError(err);
             assert.ok(source.data);
             source.getTile(0, 0, 0, function(err, data, headers) {
                 assert.ifError(err);
-                assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
-                assert.equal('image/png', headers['Content-Type']);
-                assert.equal('string', typeof headers['ETag']);
-                assert.equal('string', typeof headers['Cache-Control']);
+                assert.ok('Cache-Control' in headers);
                 assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
                 assert.end();
             });
+        });
+    });
+
+    tape('loads a tilejson file with tilejson+http:', function(assert) {
+        new TileJSON('tilejson+http://a.tiles.mapbox.com/v3/mapbox.world-bright.json', function(err, source) {
+            assert.ifError(err);
+            assert.ok(source.data);
+            checkTile(source, assert);
+            assert.end();
+        });
+    });
+
+    tape('errors on 404', function(assert) {
+        new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.doesnotexist.json', function(err, source) {
+            assert.equal('Tileset does not exist', err.message);
+            assert.end();
+        });
+    });
+
+    tape('errors on bad JSON', function(assert) {
+        new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.world-bright.jsonp', function(err, source) {
+            assert.equal('Unexpected token g', err.message);
+            assert.end();
+        });
+    });
+
+    tape('should load a tilejson file', function(assert) {
+        new TileJSON('tilejson://' + __dirname + '/fixtures/world-bright.tilejson', function(err, source) {
+            assert.ifError(err);
+            assert.ok(source.data);
+            checkTile(source, assert);
         });
     });
 
@@ -60,7 +108,7 @@ tape('setup', function(assert) {
         new TileJSON('tilejson+file://' + __dirname + '/fixtures/world-bright.tilejson', function(err, source) {
             assert.ifError(err);
             assert.ok(source.data);
-            assert.end();
+            checkTile(source, assert);
         });
     });
 
@@ -85,61 +133,6 @@ tape('setup', function(assert) {
             assert.ok(err);
             assert.equal(err.type, 'unexpected_token');
             assert.end();
-        });
-    });
-})();
-
-(function() {
-    tape('loads a tilejson file', function(assert) {
-        new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.world-bright.json', function(err, source) {
-            assert.ifError(err);
-            assert.ok(source.data);
-            source.getTile(0, 0, 0, function(err, data, headers) {
-                assert.ifError(err);
-                assert.ok('Cache-Control' in headers);
-                assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
-                assert.end();
-            });
-        });
-    });
-
-    tape('loads a tilejson file with tilejson+http:', function(assert) {
-        new TileJSON('tilejson+http://a.tiles.mapbox.com/v3/mapbox.world-bright.json', function(err, source) {
-            assert.ifError(err);
-            assert.ok(source.data);
-            assert.end();
-        });
-    });
-
-    tape('errors on 404', function(assert) {
-        new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.doesnotexist.json', function(err, source) {
-            assert.equal('Tileset does not exist', err.message);
-            assert.end();
-        });
-    });
-
-    tape('errors on bad JSON', function(assert) {
-        new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.world-bright.jsonp', function(err, source) {
-            assert.equal('Unexpected token g', err.message);
-            assert.end();
-        });
-    });
-})();
-
-(function() {
-    tape('loads directly from data', function(assert) {
-        new TileJSON({ data: fixtures['world-bright'] }, function(err, source) {
-            assert.ifError(err);
-            assert.ok(source.data);
-            source.getTile(0, 0, 0, function(err, data, headers) {
-                assert.ifError(err);
-                assert.ok(!isNaN(Date.parse(headers['Last-Modified'])));
-                assert.equal('image/png', headers['Content-Type']);
-                assert.equal('string', typeof headers['ETag']);
-                assert.equal('string', typeof headers['Cache-Control']);
-                assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
-                assert.end();
-            });
         });
     });
 })();
