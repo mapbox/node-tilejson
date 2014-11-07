@@ -64,12 +64,7 @@ tape('setup', function(assert) {
         new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.world-bright.json', function(err, source) {
             assert.ifError(err);
             assert.ok(source.data);
-            source.getTile(0, 0, 0, function(err, data, headers) {
-                assert.ifError(err);
-                assert.ok('Cache-Control' in headers);
-                assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
-                assert.end();
-            });
+            checkTile(source, assert);
         });
     });
 
@@ -78,7 +73,6 @@ tape('setup', function(assert) {
             assert.ifError(err);
             assert.ok(source.data);
             checkTile(source, assert);
-            assert.end();
         });
     });
 
