@@ -22,7 +22,7 @@
     "Konstantin Käfer <kkaefer@gmail.com>"
   ],
   "dependencies": {
-    "agentkeepalive": "^2.0.2",
+    "agentkeepalive": "2.0.2",
     "get": "1.4.x",
     "tiletype": "0.1.x"
   },
