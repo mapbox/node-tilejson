@@ -24,12 +24,14 @@
   "dependencies": {
     "agentkeepalive": "2.0.2",
     "get": "1.4.x",
+    "istanbul": "~0.3.17",
     "tiletype": "0.1.x"
   },
   "devDependencies": {
     "tape": "3.0.x"
   },
   "scripts": {
-    "test": "tape test/*.test.js"
+    "test": "tape test/*.test.js",
+    "coverage": "istanbul cover tape test/*.test.js && coveralls < ./coverage/lcov.info"
   }
 }
