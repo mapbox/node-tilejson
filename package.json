@@ -27,9 +27,10 @@
     "tiletype": "0.1.x"
   },
   "devDependencies": {
+    "eslint": "^0.24.0",
     "tape": "3.0.x"
   },
   "scripts": {
-    "test": "tape test/*.test.js"
+    "test": "eslint --no-eslintrc -c .eslintrc lib && tape test/*.test.js"
   }
 }
