@@ -1,18 +1,7 @@
 {
   "name": "tilejson",
-  "version": "0.13.0",
-  "main": "./lib/tilejson.js",
   "description": "Tile source backend for online tile sources",
-  "url": "http://github.com/mapbox/node-tilejson",
-  "licenses": [
-    {
-      "type": "BSD"
-    }
-  ],
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/mapbox/node-tilejson.git"
-  },
+  "version": "0.13.0",
   "author": {
     "name": "MapBox",
     "url": "http://mapbox.com/",
@@ -30,7 +19,18 @@
     "eslint": "^0.24.0",
     "tape": "3.0.x"
   },
+  "licenses": [
+    {
+      "type": "BSD"
+    }
+  ],
+  "main": "./lib/tilejson.js",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/mapbox/node-tilejson.git"
+  },
   "scripts": {
     "test": "eslint --no-eslintrc -c .eslintrc lib && tape test/*.test.js"
-  }
+  },
+  "url": "http://github.com/mapbox/node-tilejson"
 }
