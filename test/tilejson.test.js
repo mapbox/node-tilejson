@@ -117,7 +117,7 @@ tape('setup', function(assert) {
     tape('should return parser error for invalid JSON', function(assert) {
          new TileJSON('tilejson://' + __dirname + '/fixtures/bad.tilejson', function(err, source) {
             assert.ok(err);
-            assert.equal(err.type, 'unexpected_token');
+            assert.ok(err instanceof SyntaxError);
             assert.end();
         });
     });
@@ -125,7 +125,7 @@ tape('setup', function(assert) {
     tape('should not attempt to load source from cache', function(assert) {
          new TileJSON('tilejson://' + __dirname + '/fixtures/bad.tilejson', function(err, source) {
             assert.ok(err);
-            assert.equal(err.type, 'unexpected_token');
+            assert.ok(err instanceof SyntaxError);
             assert.end();
         });
     });
