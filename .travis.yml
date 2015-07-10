@@ -7,5 +7,4 @@ node_js:
   - "0.12"
 
 after_success:
- - env
- - npm run coverage
+ - if [[ ${TRAVIS_NODE_VERSION} == "0.10" ]]; then npm run coverage; fi;
