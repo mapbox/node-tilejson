@@ -25,6 +25,7 @@
     "agentkeepalive": "2.0.2",
     "get": "1.4.x",
     "istanbul": "~0.3.17",
+    "coveralls": "~2.11.2",
     "tiletype": "0.1.x"
   },
   "devDependencies": {
