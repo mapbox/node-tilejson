@@ -17,6 +17,8 @@
   },
   "devDependencies": {
     "eslint": "^0.24.0",
+    "istanbul": "~0.3.17",
+    "coveralls": "~2.11.2",
     "tape": "3.0.x"
   },
   "licenses": [
@@ -30,7 +32,8 @@
     "url": "http://github.com/mapbox/node-tilejson.git"
   },
   "scripts": {
-    "test": "eslint --no-eslintrc -c .eslintrc lib && tape test/*.test.js"
+    "test": "eslint --no-eslintrc -c .eslintrc lib && tape test/*.test.js",
+    "coverage": "istanbul cover tape test/*.test.js && coveralls < ./coverage/lcov.info"
   },
   "url": "http://github.com/mapbox/node-tilejson"
 }
