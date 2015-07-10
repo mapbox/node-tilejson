@@ -6,4 +6,16 @@
 
 A javascript implementation of https://github.com/mapbox/tilejson-spec
 
+## install
+
+```
+npm install --save tilejson
+```
+
+## API
+
+This module mainly provides an API for use by [tilelive](https://github.com/mapbox/tilelive.js):
+it implements methods that allow fetching of tiles and metadata given a TileJSON
+object.
+
 Provides a metadata for online tile sources in json format.
