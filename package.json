@@ -13,12 +13,12 @@
   "dependencies": {
     "agentkeepalive": "2.0.2",
     "get": "1.4.x",
-    "istanbul": "~0.3.17",
-    "coveralls": "~2.11.2",
     "tiletype": "0.1.x"
   },
   "devDependencies": {
     "eslint": "^0.24.0",
+    "istanbul": "~0.3.17",
+    "coveralls": "~2.11.2",
     "tape": "3.0.x"
   },
   "licenses": [
