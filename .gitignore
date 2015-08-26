@@ -1,0 +1,6 @@
+.DS_Store
+_site
+.settings
+*.7z
+node_modules
+node.exe
