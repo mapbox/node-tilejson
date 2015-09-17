@@ -417,7 +417,7 @@ tape('setup', function(assert) {
         }
         setupServer(function() {
             tilejson.getTile(5, 0, 0, function(err, data, headers) {
-                assert.equal(err.status, 500);
+                assert.equal(err.statusCode, 500);
                 assert.equal(connectionCount, 2);
                 server.close(assert.end);
             });
@@ -440,7 +440,7 @@ tape('setup', function(assert) {
         }
         setupServer(function() {
             tilejson.getTile(4, 0, 0, function(err, data, headers) {
-                assert.equal(err.status, 400);
+                assert.equal(err.statusCode, 400);
                 assert.equal(connectionCount, 1);
                 server.close(assert.end);
             });
