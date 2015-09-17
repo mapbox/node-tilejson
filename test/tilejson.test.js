@@ -39,6 +39,22 @@ tape('setup', function(assert) {
     });
 });
 
+tape('list', function(assert) {
+    TileJSON.list(__dirname + '/fixtures', function(err, list) {
+        assert.ifError(err);
+        assert.deepEqual(Object.keys(list), ['bad', 'grid', 'invalid', 'world-bright-ssl', 'world-bright']);
+        assert.end();
+    });
+});
+
+tape('findID', function(assert) {
+    TileJSON.findID(__dirname + '/fixtures', 'world-bright', function(err, uri) {
+        assert.ifError(err);
+        assert.equal(/^tilejson:/.test(uri), true);
+        assert.end();
+    });
+});
+
 (function() {
     function checkTile(source, assert) {
         source.getTile(0, 0, 0, function(err, data, headers) {
