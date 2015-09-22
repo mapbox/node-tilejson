@@ -39,6 +39,22 @@ tape('setup', function(assert) {
     });
 });
 
+tape('list', function(assert) {
+    TileJSON.list(__dirname + '/fixtures', function(err, list) {
+        assert.ifError(err);
+        assert.deepEqual(Object.keys(list), ['bad', 'grid', 'invalid', 'world-bright-ssl', 'world-bright']);
+        assert.end();
+    });
+});
+
+tape('findID', function(assert) {
+    TileJSON.findID(__dirname + '/fixtures', 'world-bright', function(err, uri) {
+        assert.ifError(err);
+        assert.equal(/^tilejson:/.test(uri), true);
+        assert.end();
+    });
+});
+
 (function() {
     function checkTile(source, assert) {
         source.getTile(0, 0, 0, function(err, data, headers) {
@@ -117,7 +133,7 @@ tape('setup', function(assert) {
     tape('should return parser error for invalid JSON', function(assert) {
          new TileJSON('tilejson://' + __dirname + '/fixtures/bad.tilejson', function(err, source) {
             assert.ok(err);
-            assert.equal(err.type, 'unexpected_token');
+            assert.ok(err instanceof SyntaxError);
             assert.end();
         });
     });
@@ -125,7 +141,7 @@ tape('setup', function(assert) {
     tape('should not attempt to load source from cache', function(assert) {
          new TileJSON('tilejson://' + __dirname + '/fixtures/bad.tilejson', function(err, source) {
             assert.ok(err);
-            assert.equal(err.type, 'unexpected_token');
+            assert.ok(err instanceof SyntaxError);
             assert.end();
         });
     });
@@ -357,7 +373,7 @@ tape('setup', function(assert) {
     tape('should abort when the server takes too long', function(assert) {
         tilejson.getTile(1, 0, 0, function(err, data, headers) {
             assert.ok(err);
-            assert.equal(err.message, 'Timed out after 200ms');
+            assert.equal(err.message, 'ETIMEDOUT');
             assert.end();
         });
     });
@@ -417,7 +433,7 @@ tape('setup', function(assert) {
         }
         setupServer(function() {
             tilejson.getTile(5, 0, 0, function(err, data, headers) {
-                assert.equal(err.status, 500);
+                assert.equal(err.statusCode, 500);
                 assert.equal(connectionCount, 2);
                 server.close(assert.end);
             });
@@ -440,7 +456,7 @@ tape('setup', function(assert) {
         }
         setupServer(function() {
             tilejson.getTile(4, 0, 0, function(err, data, headers) {
-                assert.equal(err.status, 400);
+                assert.equal(err.statusCode, 400);
                 assert.equal(connectionCount, 1);
                 server.close(assert.end);
             });

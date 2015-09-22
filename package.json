@@ -12,7 +12,7 @@
   ],
   "dependencies": {
     "agentkeepalive": "2.0.2",
-    "get": "1.4.x",
+    "requestretry": "1.4.0",
     "tiletype": "0.1.x"
   },
   "devDependencies": {
