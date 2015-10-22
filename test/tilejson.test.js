@@ -337,6 +337,14 @@ tape('findID', function(assert) {
             assert.end();
         });
     });
+
+    tape('should set scheme as xyz', function(assert) {
+        grid_source.getInfo(function(err, info) {
+            if (err) throw err;
+            assert.equal('xyz', info.scheme);
+            assert.end();
+        });
+    });
 })();
 
 (function() {
