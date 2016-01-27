@@ -63,7 +63,7 @@ tape('findID', function(assert) {
             assert.equal('image/png', headers['Content-Type']);
             assert.equal('string', typeof headers['ETag']);
             assert.equal('string', typeof headers['Cache-Control']);
-            assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
+            assert.equal('f4dc90257d0cfe350f8875f0db57cb77', md5(data));
             assert.end();
         });
     }
@@ -275,7 +275,7 @@ tape('findID', function(assert) {
             assert.equal('image/png', headers['Content-Type']);
             assert.equal('string', typeof headers['ETag']);
             assert.equal('string', typeof headers['Cache-Control']);
-            assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
+            assert.equal('f4dc90257d0cfe350f8875f0db57cb77', md5(data));
             assert.end();
         });
     });
@@ -287,7 +287,7 @@ tape('findID', function(assert) {
             assert.equal('image/png', headers['Content-Type']);
             assert.equal('string', typeof headers['ETag']);
             assert.equal('string', typeof headers['Cache-Control']);
-            assert.equal('84044cc921ee458cd1ece905e2682db0', md5(data));
+            assert.equal('548bad4a8a01a3c22f866f0f6c8d562e', md5(data));
             assert.end();
         });
     });
@@ -299,7 +299,7 @@ tape('findID', function(assert) {
             assert.equal('image/png', headers['Content-Type']);
             assert.equal('string', typeof headers['ETag']);
             assert.equal('string', typeof headers['Cache-Control']);
-            assert.equal('943ca1495e3b6e8d84dab88227904190', md5(data));
+            assert.equal('f4dc90257d0cfe350f8875f0db57cb77', md5(data));
             assert.end();
         });
     });
@@ -311,7 +311,7 @@ tape('findID', function(assert) {
             assert.equal('image/png', headers['Content-Type']);
             assert.equal('string', typeof headers['ETag']);
             assert.equal('string', typeof headers['Cache-Control']);
-            assert.equal('84044cc921ee458cd1ece905e2682db0', md5(data));
+            assert.equal('548bad4a8a01a3c22f866f0f6c8d562e', md5(data));
             assert.end();
         });
     });
