@@ -101,7 +101,7 @@ tape('findID', function(assert) {
 
     tape('errors on bad JSON', function(assert) {
         new TileJSON('http://a.tiles.mapbox.com/v3/mapbox.world-bright.jsonp', function(err, source) {
-            assert.equal('Unexpected token g', err.message);
+            assert.ok(err.message === 'Unexpected token g' || err.message === 'Unexpected token g in JSON at position 0');
             assert.end();
         });
     });
