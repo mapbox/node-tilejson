@@ -4,7 +4,8 @@ sudo: false
 
 node_js:
   - "0.10"
-  - "0.12"
+  - "4"
+  - "6"
 
 after_success:
  - if [[ ${TRAVIS_NODE_VERSION} == "0.10" ]]; then npm run coverage; fi;
