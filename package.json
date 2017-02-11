@@ -3,7 +3,7 @@
   "description": "Tile source backend for online tile sources",
   "version": "1.0.3",
   "author": "Mapbox (https://www.mapbox.com)",
-  "license": "BSD",
+  "license": "BSD-2-Clause",
   "contributors": [
     "Konstantin Käfer <kkaefer@gmail.com>"
   ],
