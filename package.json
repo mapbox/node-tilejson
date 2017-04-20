@@ -10,7 +10,7 @@
   "dependencies": {
     "agentkeepalive": "2.0.2",
     "requestretry": "1.4.0",
-    "tiletype": "0.1.x"
+    "@mapbox/tiletype": "~0.3.1"
   },
   "devDependencies": {
     "eslint": "^0.24.0",
