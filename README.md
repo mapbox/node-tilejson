@@ -9,7 +9,7 @@ A javascript implementation of https://github.com/mapbox/tilejson-spec
 ## install
 
 ```
-npm install --save tilejson
+npm install --save @mapbox/tilejson
 ```
 
 ## API
