@@ -1,5 +1,5 @@
 {
-  "name": "tilejson",
+  "name": "@mapbox/tilejson",
   "description": "Tile source backend for online tile sources",
   "version": "1.0.3",
   "author": "Mapbox (https://www.mapbox.com)",
