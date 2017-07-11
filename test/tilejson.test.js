@@ -381,7 +381,7 @@ tape('findID', function(assert) {
     tape('should abort when the server takes too long', function(assert) {
         tilejson.getTile(1, 0, 0, function(err, data, headers) {
             assert.ok(err);
-            assert.equal(err.message, 'ETIMEDOUT');
+            assert.equal(err.message, 'ESOCKETTIMEDOUT');
             assert.end();
         });
     });
@@ -419,7 +419,7 @@ tape('findID', function(assert) {
         (setupServer(function() {
             tilejson.getTile(2, 2, 2, function(err, data, headers) {
                 assert.equal(err.code, 'ECONNRESET');
-                assert.equal(connectionCount, 2);
+                assert.equal(connectionCount, 1);
                 server.close(assert.end);
             });
         }));
@@ -442,7 +442,7 @@ tape('findID', function(assert) {
         setupServer(function() {
             tilejson.getTile(5, 0, 0, function(err, data, headers) {
                 assert.equal(err.statusCode, 500);
-                assert.equal(connectionCount, 2);
+                assert.equal(connectionCount, 1);
                 server.close(assert.end);
             });
         });
