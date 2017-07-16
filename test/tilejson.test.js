@@ -381,7 +381,7 @@ tape('findID', function(assert) {
     tape('should abort when the server takes too long', function(assert) {
         tilejson.getTile(1, 0, 0, function(err, data, headers) {
             assert.ok(err);
-            assert.equal(err.message, 'ETIMEDOUT');
+            assert.equal(err.message, 'ESOCKETTIMEDOUT');
             assert.end();
         });
     });
