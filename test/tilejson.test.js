@@ -419,7 +419,7 @@ tape('findID', function(assert) {
         (setupServer(function() {
             tilejson.getTile(2, 2, 2, function(err, data, headers) {
                 assert.equal(err.code, 'ECONNRESET');
-                assert.equal(connectionCount, 1);
+                assert.equal(connectionCount, 2);
                 server.close(assert.end);
             });
         }));
@@ -442,7 +442,7 @@ tape('findID', function(assert) {
         setupServer(function() {
             tilejson.getTile(5, 0, 0, function(err, data, headers) {
                 assert.equal(err.statusCode, 500);
-                assert.equal(connectionCount, 1);
+                assert.equal(connectionCount, 2);
                 server.close(assert.end);
             });
         });
