@@ -1,7 +1,7 @@
 {
   "name": "@mapbox/tilejson",
   "description": "Tile source backend for online tile sources",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "author": "Mapbox (https://www.mapbox.com)",
   "license": "BSD-2-Clause",
   "contributors": [
