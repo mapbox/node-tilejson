@@ -1,7 +1,7 @@
 {
   "name": "@mapbox/tilejson",
   "description": "Tile source backend for online tile sources",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": "Mapbox (https://www.mapbox.com)",
   "license": "BSD-2-Clause",
   "contributors": [
@@ -27,5 +27,8 @@
     "test": "eslint --no-eslintrc -c .eslintrc lib && tape test/*.test.js",
     "coverage": "istanbul cover tape test/*.test.js && coveralls < ./coverage/lcov.info"
   },
-  "url": "http://github.com/mapbox/node-tilejson"
+  "url": "http://github.com/mapbox/node-tilejson",
+  "publishConfig": {
+    "access": "public"
+  }
 }
